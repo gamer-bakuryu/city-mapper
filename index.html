@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityMapper - Editor de Mapas Urbanos</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- BARRA SUPERIOR -->
+    <header id="top-bar">
+        <div class="logo">
+            <span class="logo-icon">🏙️</span>
+            <h1>CityMapper</h1>
+        </div>
+        <div class="top-actions">
+            <button id="btn-new" title="Novo Projeto">
+                <span class="icon">📄</span> Novo
+            </button>
+            <button id="btn-save" title="Salvar Projeto">
+                <span class="icon">💾</span> Salvar
+            </button>
+            <button id="btn-load" title="Carregar Projeto">
+                <span class="icon">📂</span> Carregar
+            </button>
+            <button id="btn-export-png" title="Exportar PNG">
+                <span class="icon">🖼️</span> Exportar PNG
+            </button>
+            <button id="btn-export-json" title="Exportar JSON">
+                <span class="icon">📋</span> Exportar JSON
+            </button>
+            <input type="file" id="file-input" accept=".json" hidden>
+            <div class="separator"></div>
+            <button id="btn-undo" title="Desfazer (Ctrl+Z)">
+                <span class="icon">↩️</span>
+            </button>
+            <button id="btn-redo" title="Refazer (Ctrl+Y)">
+                <span class="icon">↪️</span>
+            </button>
+        </div>
+    </header>
+
+    <div id="main-container">
+        <!-- PAINEL LATERAL ESQUERDO - FERRAMENTAS -->
+        <aside id="toolbar">
+            <div class="tool-section">
+                <h3>Ferramentas</h3>
+                <button class="tool-btn active" data-tool="select" title="Selecionar (V)">
+                    <span class="tool-icon">👆</span>
+                    <span class="tool-label">Selecionar</span>
+                </button>
+                <button class="tool-btn" data-tool="pan" title="Mover Mapa (H)">
+                    <span class="tool-icon">✋</span>
+                    <span class="tool-label">Mover</span>
+                </button>
+                <button class="tool-btn" data-tool="street" title="Desenhar Rua (S)">
+                    <span class="tool-icon">🛣️</span>
+                    <span class="tool-label">Rua</span>
+                </button>
+                <button class="tool-btn" data-tool="avenue" title="Desenhar Avenida (A)">
+                    <span class="tool-icon">🛤️</span>
+                    <span class="tool-label">Avenida</span>
+                </button>
+                <button class="tool-btn" data-tool="highway" title="Desenhar Rodovia (W)">
+                    <span class="tool-icon">🚗</span>
+                    <span class="tool-label">Rodovia</span>
+                </button>
+                <button class="tool-btn" data-tool="polygon" title="Desenhar Polígono (P)">
+                    <span class="tool-icon">⬡</span>
+                    <span class="tool-label">Polígono</span>
+                </button>
+                <button class="tool-btn" data-tool="rectangle" title="Desenhar Retângulo (R)">
+                    <span class="tool-icon">▬</span>
+                    <span class="tool-label">Retângulo</span>
+                </button>
+                <button class="tool-btn" data-tool="circle" title="Desenhar Círculo (C)">
+                    <span class="tool-icon">⬤</span>
+                    <span class="tool-label">Círculo</span>
+                </button>
+                <button class="tool-btn" data-tool="text" title="Adicionar Texto (T)">
+                    <span class="tool-icon">🔤</span>
+                    <span class="tool-label">Texto</span>
+                </button>
+                <button class="tool-btn" data-tool="eraser" title="Apagar (E)">
+                    <span class="tool-icon">🗑️</span>
+                    <span class="tool-label">Apagar</span>
+                </button>
+                <button class="tool-btn" data-tool="measure" title="Medir Distância (M)">
+                    <span class="tool-icon">📏</span>
+                    <span class="tool-label">Medir</span>
+                </button>
+            </div>
+
+            <div class="tool-section">
+                <h3>Estruturas Rápidas</h3>
+                <button class="struct-btn" data-struct="house" title="Casa">
+                    <span class="tool-icon">🏠</span>
+                    <span class="tool-label">Casa</span>
+                </button>
+                <button class="struct-btn" data-struct="building" title="Prédio">
+                    <span class="tool-icon">🏢</span>
+                    <span class="tool-label">Prédio</span>
+                </button>
+                <button class="struct-btn" data-struct="commercial" title="Comércio">
+                    <span class="tool-icon">🏪</span>
+                    <span class="tool-label">Comércio</span>
+                </button>
+                <button class="struct-btn" data-struct="industrial" title="Industrial">
+                    <span class="tool-icon">🏭</span>
+                    <span class="tool-label">Indústria</span>
+                </button>
+                <button class="struct-btn" data-struct="park" title="Parque">
+                    <span class="tool-icon">🌳</span>
+                    <span class="tool-label">Parque</span>
+                </button>
+                <button class="struct-btn" data-struct="hospital" title="Hospital">
+                    <span class="tool-icon">🏥</span>
+                    <span class="tool-label">Hospital</span>
+                </button>
+                <button class="struct-btn" data-struct="school" title="Escola">
+                    <span class="tool-icon">🏫</span>
+                    <span class="tool-label">Escola</span>
+                </button>
+                <button class="struct-btn" data-struct="church" title="Igreja">
+                    <span class="tool-icon">⛪</span>
+                    <span class="tool-label">Igreja</span>
+                </button>
+                <button class="struct-btn" data-struct="stadium" title="Estádio">
+                    <span class="tool-icon">🏟️</span>
+                    <span class="tool-label">Estádio</span>
+                </button>
+                <button class="struct-btn" data-struct="parking" title="Estacionamento">
+                    <span class="tool-icon">🅿️</span>
+                    <span class="tool-label">Estacion.</span>
+                </button>
+                <button class="struct-btn" data-struct="water" title="Lago/Rio">
+                    <span class="tool-icon">💧</span>
+                    <span class="tool-label">Água</span>
+                </button>
+                <button class="struct-btn" data-struct="plaza" title="Praça">
+                    <span class="tool-icon">⛲</span>
+                    <span class="tool-label">Praça</span>
+                </button>
+            </div>
+
+            <div class="tool-section">
+                <h3>Visualização</h3>
+                <div class="view-controls">
+                    <button id="btn-zoom-in" title="Zoom +">🔍+</button>
+                    <span id="zoom-level">100%</span>
+                    <button id="btn-zoom-out" title="Zoom -">🔍-</button>
+                </div>
+                <button id="btn-fit" class="full-btn">📐 Ajustar à Tela</button>
+                <label class="toggle-label">
+                    <input type="checkbox" id="toggle-grid" checked>
+                    <span>Mostrar Grid</span>
+                </label>
+                <label class="toggle-label">
+                    <input type="checkbox" id="toggle-snap" checked>
+                    <span>Snap to Grid</span>
+                </label>
+                <label class="toggle-label">
+                    <input type="checkbox" id="toggle-labels">
+                    <span>Mostrar Nomes</span>
+                </label>
+            </div>
+        </aside>
+
+        <!-- CANVAS PRINCIPAL -->
+        <main id="canvas-container">
+            <canvas id="main-canvas"></canvas>
+            <div id="coords-display">X: 0 | Y: 0</div>
+            <div id="context-menu" class="hidden">
+                <button data-action="edit">✏️ Editar</button>
+                <button data-action="duplicate">📋 Duplicar</button>
+                <button data-action="front">⬆️ Trazer Frente</button>
+                <button data-action="back">⬇️ Enviar Trás</button>
+                <button data-action="lock">🔒 Bloquear</button>
+                <button data-action="delete">🗑️ Excluir</button>
+            </div>
+        </main>
+
+        <!-- PAINEL LATERAL DIREITO - PROPRIEDADES -->
+        <aside id="properties-panel">
+            <div class="panel-section" id="no-selection">
+                <h3>Propriedades</h3>
+                <p class="hint">Selecione um elemento para editar suas propriedades</p>
+            </div>
+
+            <div class="panel-section hidden" id="element-props">
+                <h3>Propriedades do Elemento</h3>
+
+                <label>Nome:</label>
+                <input type="text" id="prop-name" placeholder="Nome do elemento">
+
+                <label>Tipo:</label>
+                <select id="prop-type">
+                    <option value="residential">Residencial</option>
+                    <option value="commercial">Comercial</option>
+                    <option value="industrial">Industrial</option>
+                    <option value="institutional">Institucional</option>
+                    <option value="recreational">Recreativo</option>
+                    <option value="natural">Natural</option>
+                    <option value="infrastructure">Infraestrutura</option>
+                </select>
+
+                <label>Cor de Preenchimento:</label>
+                <input type="color" id="prop-fill" value="#4CAF50">
+
+                <label>Opacidade: <span id="opacity-val">80%</span></label>
+                <input type="range" id="prop-opacity" min="0" max="100" value="80">
+
+                <label>Cor da Borda:</label>
+                <input type="color" id="prop-stroke" value="#333333">
+
+                <label>Espessura da Borda:</label>
+                <input type="number" id="prop-stroke-width" min="0" max="20" value="2">
+
+                <div id="street-props" class="hidden">
+                    <label>Largura da Via (px):</label>
+                    <input type="number" id="prop-road-width" min="4" max="80" value="16">
+
+                    <label>Tipo de Via:</label>
+                    <select id="prop-road-type">
+                        <option value="local">Local</option>
+                        <option value="collector">Coletora</option>
+                        <option value="arterial">Arterial</option>
+                        <option value="highway">Rodovia</option>
+                    </select>
+
+                    <label class="toggle-label">
+                        <input type="checkbox" id="prop-oneway">
+                        <span>Mão Única</span>
+                    </label>
+                </div>
+
+                <div id="position-props">
+                    <h4>Posição</h4>
+                    <div class="pos-grid">
+                        <label>X:</label>
+                        <input type="number" id="prop-x">
+                        <label>Y:</label>
+                        <input type="number" id="prop-y">
+                        <label>W:</label>
+                        <input type="number" id="prop-w">
+                        <label>H:</label>
+                        <input type="number" id="prop-h">
+                    </div>
+                    <label>Rotação: <span id="rotation-val">0°</span></label>
+                    <input type="range" id="prop-rotation" min="0" max="360" value="0">
+                </div>
+
+                <button id="btn-apply-props" class="primary-btn">✅ Aplicar</button>
+                <button id="btn-delete-element" class="danger-btn">🗑️ Excluir</button>
+            </div>
+
+            <!-- LAYERS / CAMADAS -->
+            <div class="panel-section">
+                <h3>Camadas
+                    <button id="btn-add-layer" class="small-btn" title="Nova Camada">+</button>
+                </h3>
+                <div id="layers-list">
+                    <!-- Preenchido via JS -->
+                </div>
+            </div>
+
+            <!-- MINIMAP -->
+            <div class="panel-section">
+                <h3>Minimapa</h3>
+                <canvas id="minimap" width="200" height="150"></canvas>
+            </div>
+
+            <!-- ESTATÍSTICAS -->
+            <div class="panel-section">
+                <h3>Estatísticas</h3>
+                <div id="stats">
+                    <div class="stat-row">
+                        <span>Ruas:</span><span id="stat-streets">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Estruturas:</span><span id="stat-structures">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Área Total:</span><span id="stat-area">0 m²</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Km de vias:</span><span id="stat-roads">0 km</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- MODAL DE TEXTO -->
+    <div id="text-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Adicionar Texto</h3>
+            <input type="text" id="text-input" placeholder="Digite o texto...">
+            <label>Tamanho:</label>
+            <input type="number" id="text-size" value="16" min="8" max="72">
+            <label>Cor:</label>
+            <input type="color" id="text-color" value="#333333">
+            <div class="modal-actions">
+                <button id="text-ok" class="primary-btn">OK</button>
+                <button id="text-cancel" class="danger-btn">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HELP OVERLAY -->
+    <div id="help-overlay" class="modal hidden">
+        <div class="modal-content large">
+            <h3>⌨️ Atalhos de Teclado</h3>
+            <div class="shortcuts-grid">
+                <div><kbd>V</kbd> Selecionar</div>
+                <div><kbd>H</kbd> Mover Mapa</div>
+                <div><kbd>S</kbd> Rua</div>
+                <div><kbd>A</kbd> Avenida</div>
+                <div><kbd>W</kbd> Rodovia</div>
+                <div><kbd>P</kbd> Polígono</div>
+                <div><kbd>R</kbd> Retângulo</div>
+                <div><kbd>C</kbd> Círculo</div>
+                <div><kbd>T</kbd> Texto</div>
+                <div><kbd>E</kbd> Apagar</div>
+                <div><kbd>M</kbd> Medir</div>
+                <div><kbd>Delete</kbd> Excluir seleção</div>
+                <div><kbd>Ctrl+Z</kbd> Desfazer</div>
+                <div><kbd>Ctrl+Y</kbd> Refazer</div>
+                <div><kbd>Ctrl+S</kbd> Salvar</div>
+                <div><kbd>Ctrl+A</kbd> Selecionar tudo</div>
+                <div><kbd>Esc</kbd> Cancelar / Desselecionar</div>
+                <div><kbd>Scroll</kbd> Zoom</div>
+                <div><kbd>?</kbd> Ajuda</div>
+            </div>
+            <button id="close-help" class="primary-btn">Fechar</button>
+        </div>
+    </div>
+
+    <script src="js/grid.js"></script>
+    <script src="js/history.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/tools.js"></script>
+    <script src="js/canvas.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
